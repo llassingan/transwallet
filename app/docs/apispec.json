@@ -1,0 +1,318 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Wallet Transaction API",
+    "version": "1.0",
+    "description": "Wallet Transaction API Documentation"
+  },
+  "servers": [
+    {
+      "url": "localhost:3000/api/wallets"
+    }
+  ],
+  "paths": {
+    "/topup": {
+      "post": {
+        "tags": [
+          "Wallet Transaction"
+        ],
+        "description": "Top up Wallet",
+        "summary": "Top up Wallet",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "accnumb": {
+                    "type": "string",
+                    "minLength": 10,
+                    "nullable": false,
+                    "default": "1234567890"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "nullable": false,
+                    "default": "1000"
+                  }
+                },
+                "required": [
+                  "accnumb",
+                  "amount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success top up wallet",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "default": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "idTrx": {
+                            "type": "number"
+                          },
+                          "accnumb": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/send": {
+      "post": {
+        "tags": [
+          "Wallet Transaction"
+        ],
+        "description": "Send money",
+        "summary": "Send money",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "senderaccnumb": {
+                    "type": "string",
+                    "minLength": 10,
+                    "nullable": false,
+                    "default": "1234567890"
+                  },
+                  "recepientaccnumb": {
+                    "type": "string",
+                    "minLength": 10,
+                    "nullable": false,
+                    "default": "0987654321"
+                  },
+                  "amount": {
+                    "type": "number",
+                    "nullable": false,
+                    "default": "1000"
+                  }
+                },
+                "required": [
+                  "senderaccnumb",
+                  "recepientaccnumb",
+                  "amount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success send money",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "default": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "idTrx": {
+                            "type": "number"
+                          },
+                          "senderaccnumb": {
+                            "type": "string"
+                          },
+                          "recepientaccnumb": {
+                            "type": "string"
+                          },
+                          "recepientname": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{accountNumber}": {
+      "get": {
+        "tags": [
+          "Wallet Transaction"
+        ],
+        "description": "Get Balance",
+        "summary": "Get Balance",
+        "parameters": [
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "description": "account number",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "default": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "accountnumber": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "balance": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{accountNumber}/history": {
+      "get": {
+        "tags": [
+          "Wallet Transaction"
+        ],
+        "description": "Transaction history",
+        "summary": "Transaction history",
+        "parameters": [
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "description": "account number",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "nullable": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success get history",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "default": 200
+                    },
+                    "status": {
+                      "type": "string",
+                      "default": "Success"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "idtrx": {
+                            "type": "string"
+                          },
+                          "fromaccount": {
+                            "type": "string"
+                          },
+                          "toaccount": {
+                            "type": "string"
+                          },
+                          "trxtype": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "status"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
