@@ -65,7 +65,7 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "idTrx": {
+                          "idtrx": {
                             "type": "number"
                           },
                           "accnumb": {
@@ -150,7 +150,7 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "idTrx": {
+                          "idtrx": {
                             "type": "number"
                           },
                           "senderaccnumb": {
