@@ -223,9 +223,6 @@
                           "accountnumber": {
                             "type": "string"
                           },
-                          "name": {
-                            "type": "string"
-                          },
                           "balance": {
                             "type": "number"
                           }
@@ -287,17 +284,15 @@
                           "idtrx": {
                             "type": "string"
                           },
-                          "fromaccount": {
-                            "type": "string"
-                          },
-                          "toaccount": {
-                            "type": "string"
-                          },
                           "trxtype": {
                             "type": "string"
                           },
                           "amount": {
                             "type": "string"
+                          },
+                          "time":{
+                            "type": "string",
+                            "format": "date-time"
                           }
                         }
                       }
