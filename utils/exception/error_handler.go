@@ -1,11 +1,13 @@
 package exception
 
 import (
+	"errors"
 	"strings"
 	"transwallet/model/web"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 // ValidationErrorResponse defines the structure for validation error details
@@ -35,7 +37,7 @@ func ErrorHandler() fiber.ErrorHandler {
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
 		// Handle not found errors
-		if strings.Contains(err.Error(), "record not found") {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			stdResponse := web.StdErrorResponse{
 				Code: fiber.StatusNotFound,
 				Status: "Not Found",
@@ -43,6 +45,16 @@ func ErrorHandler() fiber.ErrorHandler {
 			}
 			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
 		}
+
+		if strings.Contains(err.Error(), "insufficient funds") {
+			stdResponse := web.StdErrorResponse{
+				Code: fiber.StatusBadRequest,
+				Status: "Bad Request",
+				Error: "insufficient funds",
+			}
+			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
+		}
+
 		// For any other internal server error
 		stdResponse := web.StdErrorResponse{
 			Code: fiber.StatusInternalServerError,
