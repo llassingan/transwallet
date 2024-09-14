@@ -14,18 +14,18 @@ type WalletRepositoryImpl struct {
 }
 
 // NewWalletRepository creates a new instance of WalletRepository
-func NewWalletRepository(db *gorm.DB) *WalletRepositoryImpl {
+func NewWalletRepository() *WalletRepositoryImpl {
 	return &WalletRepositoryImpl{}
 }
 
 // TopUp adds funds to an account
-func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId int, amount float64) (domain.Transaction, error) {
+func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId uint, amount float64) (domain.Transaction, error) {
 
 	var account domain.Account
 	var transaction domain.Transaction
 	// perform locking to handle race condition
 	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&account, "id = ?", accountId).Error; err != nil {
-		return transaction, err
+		return transaction,err
 	}
 
 	// update balance
@@ -35,7 +35,7 @@ func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId
 	}
 
 	transaction = domain.Transaction{
-		AccountID: uint(accountId),
+		AccountID: accountId,
 		Amount:    amount,
 		Type:      "c",
 	}
@@ -48,7 +48,7 @@ func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId
 }
 
 // SendMoney transfers money between accounts
-func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId int, toAccountId int, amount float64) (web.ReceiptResponse, error) {
+func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId uint, toAccountId uint, amount float64) (web.ReceiptResponse, error) {
 	var fromAccount, toAccount domain.Account
 	var transactiondeb, transactioncred domain.Transaction
 
@@ -78,7 +78,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 	// Create a new transaction record
 
 	transactiondeb = domain.Transaction{
-		AccountID: uint(toAccountId),
+		AccountID: toAccountId,
 		Amount:    amount,
 		Type:      "c",
 	}
@@ -87,7 +87,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 	}
 
 	transactioncred = domain.Transaction{
-		AccountID: uint(fromAccountId),
+		AccountID: fromAccountId,
 		Amount:    amount,
 		Type:      "d",
 	}
@@ -97,8 +97,8 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 	// Prepare the response
 	response := web.ReceiptResponse{
 		IdTrx:            transactiondeb.ID,
-		SenderAccNumb:    uint(fromAccountId),
-		RecepientAccNumb: uint(toAccountId),
+		SenderAccNumb:    fromAccountId,
+		RecepientAccNumb: toAccountId,
 		RecepientName:    toAccount.Customer.Name,
 		Amount:           amount,
 	}
@@ -107,7 +107,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 }
 
 // GetBalance returns the current balance of an account
-func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, accountId int) (domain.Account, error) {
+func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, accountId uint) (domain.Account, error) {
 	var account domain.Account
 
 	// Fetch the account
@@ -119,7 +119,7 @@ func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, acco
 }
 
 // GetTransactionHistory returns the transaction history for an account
-func (r *WalletRepositoryImpl) GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId int) ([]domain.Transaction, error) {
+func (r *WalletRepositoryImpl) GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId uint) ([]domain.Transaction, error) {
 	var transactions []domain.Transaction
 
 	// Fetch transactions for the account
