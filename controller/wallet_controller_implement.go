@@ -27,7 +27,12 @@ func (ctrl *WalletControllerImpl) TopUp(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(response)
+	stdResponse := web.StdResponse{
+		Code: fiber.StatusOK,
+		Status: "Success",
+		Data: response,
+	}
+	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
 // Handle Send Money request
@@ -41,7 +46,12 @@ func (ctrl *WalletControllerImpl) SendMoney(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-	return c.Status(fiber.StatusOK).JSON(response)
+	stdResponse := web.StdResponse{
+		Code: fiber.StatusOK,
+		Status: "Success",
+		Data: response,
+	}
+	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
 // Handle Get Balance request
@@ -56,8 +66,13 @@ func (ctrl *WalletControllerImpl) GetBalance(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
+	stdResponse := web.StdResponse{
+		Code: fiber.StatusOK,
+		Status: "Success",
+		Data: response,
+	}
 
-	return c.Status(fiber.StatusOK).JSON(response)
+	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
 // Handle Get Transaction History request
@@ -72,6 +87,10 @@ func (ctrl *WalletControllerImpl) GetTransactionHistory(c *fiber.Ctx) error {
 	if err != nil {
 		return err
 	}
-
-	return c.Status(fiber.StatusOK).JSON(response)
+	stdResponse := web.StdResponse{
+		Code: fiber.StatusOK,
+		Status: "Success",
+		Data: response,
+	}
+	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
