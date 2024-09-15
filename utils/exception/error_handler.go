@@ -18,51 +18,61 @@ type ValidationErrorResponse struct {
 
 // handling error
 func ErrorHandler() fiber.ErrorHandler {
-	return func(c *fiber.Ctx, err error) error { 
+	return func(c *fiber.Ctx, err error) error {
 		// handling validation error
 		if ve, ok := err.(validator.ValidationErrors); ok {
 
 			var errors []ValidationErrorResponse
-			
+
 			for _, e := range ve {
-				 // get the  field and error message
+				// get the  field and error message
 				errors = append(errors, ValidationErrorResponse{
-					Field: e.Field(),
-					Message:validationErrorMessage(e)})
-			} 
+					Field:   e.Field(),
+					Message: validationErrorMessage(e)})
+			}
 			// wrap error standard response
 			stdResponse := web.StdErrorResponse{
-				Code: fiber.StatusBadRequest,
+				Code:   fiber.StatusBadRequest,
 				Status: "Bad Request",
-				Error: errors,
+				Error:  errors,
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
 		// handling not found errors
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			stdResponse := web.StdErrorResponse{
-				Code: fiber.StatusNotFound,
+				Code:   fiber.StatusNotFound,
 				Status: "Not Found",
-				Error: "data not found",
+				Error:  "data not found",
 			}
 			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
 		}
 
-		// handling insufficient funds 
+		// handling invalid input
+		if strings.Contains(err.Error(), "Invalid account Number") {
+			stdResponse := web.StdErrorResponse{
+				Code:   fiber.StatusBadRequest,
+				Status: "Bad Request",
+				Error:  "The value is not valid account number",
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
+		}
+
+		// handling insufficient funds
 		if strings.Contains(err.Error(), "insufficient funds") {
 			stdResponse := web.StdErrorResponse{
-				Code: fiber.StatusBadRequest,
+				Code:   fiber.StatusBadRequest,
 				Status: "Bad Request",
-				Error: "insufficient funds",
+				Error:  "insufficient funds",
 			}
-			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
+			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
 
 		// handling any other error
 		stdResponse := web.StdErrorResponse{
-			Code: fiber.StatusInternalServerError,
+			Code:   fiber.StatusInternalServerError,
 			Status: "Internal Server Error",
-			Error: "internal server error",
+			Error:  err,
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(stdResponse)
 	}
@@ -70,12 +80,16 @@ func ErrorHandler() fiber.ErrorHandler {
 
 // helper function to generate validation error messages
 func validationErrorMessage(e validator.FieldError) string {
-	// check used tags 
+	// check used tags
 	switch e.Tag() {
 	case "required":
 		return "This field is required"
 	case "minaccountid":
-		return "The value is not valid"
+		return "The value is not valid account number"
+	case "numeric":
+		return "The value is not valid account number"
+	case "min":
+		return "The minimum transaction is 10"
 	default:
 		return "Invalid value"
 	}

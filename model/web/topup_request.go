@@ -1,7 +1,7 @@
 package web
 
 type TopUpRequest struct {
-	AccountID uint  `validate:"required,minaccountid" json:"accnumb"`
-	Amount	float64 `validate:"required" json:"amount"`
+	AccountID int  `validate:"required,minaccountid,numeric" json:"accnumb"`
+	Amount	float64 `validate:"required,numeric,min=10" json:"amount"`
 
 }

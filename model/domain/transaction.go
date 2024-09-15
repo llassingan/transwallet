@@ -3,8 +3,8 @@ package domain
 import "time"
 
 type Transaction struct {
-	ID        uint      `gorm:"primaryKey;column:id;autoIncrement"`
-	AccountID uint      `gorm:"column:account"`
+	ID        int      `gorm:"primaryKey;column:id;autoIncrement"`
+	AccountID int      `gorm:"column:account"`
 	Amount    float64   `gorm:"type:double precision;column:amount"`
 	Type      string    `gorm:"column:type"`
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime;<-:create"`

@@ -92,7 +92,7 @@ func (s *WalletServiceImpl) SendMoney(ctx context.Context, req web.SendRequest) 
 }
 
 // handle get balance request 
-func (s *WalletServiceImpl) GetBalance(ctx context.Context, accountId uint) (web.BalanceResponse, error) {
+func (s *WalletServiceImpl) GetBalance(ctx context.Context, accountId int) (web.BalanceResponse, error) {
 	var BalanceResponse web.BalanceResponse
 	tx := s.DB.Begin()
 	s.Logger.Info("Begin transaction")
@@ -113,7 +113,7 @@ func (s *WalletServiceImpl) GetBalance(ctx context.Context, accountId uint) (web
 }
 
 // handle get transaction history request 
-func (s *WalletServiceImpl) GetTransactionHistory(ctx context.Context, accountId uint) ([]web.TransactionResponse, error) {
+func (s *WalletServiceImpl) GetTransactionHistory(ctx context.Context, accountId int) ([]web.TransactionResponse, error) {
 	var ListHistory []web.TransactionResponse
 	tx := s.DB.Begin()
 	s.Logger.Info("Begin transaction")

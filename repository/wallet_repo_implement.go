@@ -23,7 +23,7 @@ func NewWalletRepository(logger *logrus.Logger) *WalletRepositoryImpl {
 }
 
 // handle top up request
-func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId uint, amount float64) (domain.Transaction, error) {
+func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId int, amount float64) (domain.Transaction, error) {
 
 	var account domain.Account
 	var transaction domain.Transaction
@@ -60,7 +60,7 @@ func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId
 }
 
 // handle send money request
-func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId uint, toAccountId uint, amount float64) (web.ReceiptResponse, error) {
+func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId int, toAccountId int, amount float64) (web.ReceiptResponse, error) {
 	var fromAccount, toAccount domain.Account
 	var transactiondeb, transactioncred domain.Transaction
 
@@ -68,12 +68,12 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 	r.Logger.Info("Execute send money select sender acount query")
 	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&fromAccount, "id = ?", fromAccountId).Error; err != nil {
 		r.Logger.Error(err)
-		return web.ReceiptResponse{}, err
+		return web.ReceiptResponse{}, errors.New("sender not found")
 	}
 	r.Logger.Info("Execute send money select recepient acount query")
 	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Preload("Customer").First(&toAccount, "id=?", toAccountId).Error; err != nil {
 		r.Logger.Error(err)
-		return web.ReceiptResponse{}, err
+		return web.ReceiptResponse{}, errors.New("recepient not found")
 	}
 
 	// check if the sender has sufficient balance
@@ -133,7 +133,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 }
 
 // handle get balance request
-func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, accountId uint) (domain.Account, error) {
+func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, accountId int) (domain.Account, error) {
 	var account domain.Account
 
 	// fetch the account
@@ -148,10 +148,11 @@ func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, acco
 }
 
 // handle get transaction history
-func (r *WalletRepositoryImpl) GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId uint) ([]domain.Transaction, error) {
+func (r *WalletRepositoryImpl) GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId int) ([]domain.Transaction, error) {
 	var transactions []domain.Transaction
 
 	// fetch transactions data
+
 	r.Logger.Info("Execute get history select query")
 	if err := tx.Where("account = ?", accountId).Find(&transactions).Error; err != nil {
 		r.Logger.Error(err)

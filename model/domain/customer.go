@@ -3,7 +3,7 @@ package domain
 import "time"
 
 type Customer struct {
-	ID            uint      `gorm:"primaryKey;column:id;autoIncrement"`
+	ID            int      `gorm:"primaryKey;column:id"`
 	Name          string    `gorm:"column:name"`
 	CreatedAt     time.Time `gorm:"column:created_at;autoCreateTime;<-:create"`
 	UpdatedAt     time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`

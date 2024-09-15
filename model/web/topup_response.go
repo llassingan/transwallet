@@ -1,7 +1,7 @@
 package web
 
 type TopUpResponse struct {
-	TrxId     uint    `json:"idtrx"`
-	AccountID uint    `json:"accnumb"`
+	TrxId     int    `json:"idtrx"`
+	AccountID int    `json:"accnumb"`
 	Amount    float64 `json:"amount"`
 }

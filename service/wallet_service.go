@@ -14,8 +14,8 @@ type WalletService interface {
 	SendMoney(ctx context.Context, req web.SendRequest) (web.ReceiptResponse, error)
 
 	// Get Balance
-	GetBalance(ctx context.Context, accountId uint) (web.BalanceResponse, error)
+	GetBalance(ctx context.Context, accountId int) (web.BalanceResponse, error)
 
 	// Get Transaction History
-	GetTransactionHistory(ctx context.Context, accountId uint) ([]web.TransactionResponse, error)
+	GetTransactionHistory(ctx context.Context, accountId int) ([]web.TransactionResponse, error)
 }

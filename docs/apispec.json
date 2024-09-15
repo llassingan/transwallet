@@ -25,10 +25,10 @@
                 "type": "object",
                 "properties": {
                   "accnumb": {
-                    "type": "string",
-                    "minLength": 10,
+                    "type": "number",
+                    "minLength": 6,
                     "nullable": false,
-                    "default": "1234567890"
+                    "default": "100001"
                   },
                   "amount": {
                     "type": "number",
@@ -66,13 +66,16 @@
                         "type": "object",
                         "properties": {
                           "idtrx": {
-                            "type": "number"
+                            "type": "number",
+                            "default":1
                           },
                           "accnumb": {
-                            "type": "string"
+                            "type": "number",
+                            "default":100001
                           },
                           "amount": {
-                            "type": "number"
+                            "type": "number",
+                            "default":1000
                           }
                         }
                       }
@@ -103,21 +106,21 @@
                 "type": "object",
                 "properties": {
                   "senderaccnumb": {
-                    "type": "string",
-                    "minLength": 10,
+                    "type": "number",
+                    "minLength": 6,
                     "nullable": false,
-                    "default": "1234567890"
+                    "default": 100001
                   },
                   "recepientaccnumb": {
-                    "type": "string",
-                    "minLength": 10,
+                    "type": "number",
+                    "minLength": 6,
                     "nullable": false,
-                    "default": "0987654321"
+                    "default": 100002
                   },
                   "amount": {
                     "type": "number",
                     "nullable": false,
-                    "default": "1000"
+                    "default": 1000
                   }
                 },
                 "required": [
@@ -151,19 +154,24 @@
                         "type": "object",
                         "properties": {
                           "idtrx": {
-                            "type": "number"
+                            "type": "number",
+                            "default":1
                           },
                           "senderaccnumb": {
-                            "type": "string"
+                            "type": "number",
+                            "default":100001
                           },
                           "recepientaccnumb": {
-                            "type": "string"
+                            "type": "number",
+                            "default":100002
                           },
                           "recepientname": {
-                            "type": "string"
+                            "type": "string",
+                            "default":"Andi"
                           },
                           "amount": {
-                            "type": "number"
+                            "type": "number",
+                            "default":1000
                           }
                         }
                       }
@@ -194,8 +202,9 @@
             "description": "account number",
             "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "number",
+              "nullable": false,
+              "default":100001
             }
           }
         ],
@@ -221,10 +230,12 @@
                         "type": "object",
                         "properties": {
                           "accountnumber": {
-                            "type": "string"
+                            "type": "number",
+                            "default":100001
                           },
                           "balance": {
-                            "type": "number"
+                            "type": "number",
+                            "default":1000
                           }
                         }
                       }
@@ -255,8 +266,9 @@
             "description": "account number",
             "required": true,
             "schema": {
-              "type": "string",
-              "nullable": false
+              "type": "number",
+              "nullable": false,
+              "default":100001
             }
           }
         ],
@@ -282,13 +294,16 @@
                         "type": "object",
                         "properties": {
                           "idtrx": {
-                            "type": "string"
+                            "type": "number",
+                            "default":1
                           },
                           "trxtype": {
-                            "type": "string"
+                            "type": "string",
+                            "default":"c"
                           },
                           "amount": {
-                            "type": "string"
+                            "type": "number",
+                            "default":1000
                           },
                           "time":{
                             "type": "string",
