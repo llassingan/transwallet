@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	"errors"
-	"transwallet/model/domain"
-	"transwallet/model/web"
+	"transwallet/api/model/domain"
+	"transwallet/api/model/web"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"

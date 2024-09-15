@@ -2,7 +2,7 @@ package service
 
 import (
 	"context"
-	"transwallet/model/web"
+	"transwallet/api/model/web"
 )
 
 type WalletService interface {

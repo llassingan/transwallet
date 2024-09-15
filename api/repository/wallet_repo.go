@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"transwallet/model/domain"
-	"transwallet/model/web"
+	"transwallet/api/model/domain"
+	"transwallet/api/model/web"
 
 	"gorm.io/gorm"
 )

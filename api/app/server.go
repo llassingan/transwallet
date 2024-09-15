@@ -1,11 +1,11 @@
 package app
 
 import (
-	"transwallet/controller"
-	"transwallet/db"
-	"transwallet/repository"
-	"transwallet/service"
-	"transwallet/utils/exception"
+	"transwallet/api/controller"
+	"transwallet/api/db"
+	"transwallet/api/repository"
+	"transwallet/api/service"
+	"transwallet/api/utils/exception"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"

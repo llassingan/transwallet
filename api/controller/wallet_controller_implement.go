@@ -3,8 +3,8 @@ package controller
 import (
 	// "encoding/json"
 	"strconv"
-	"transwallet/model/web"
-	"transwallet/service"
+	"transwallet/api/model/web"
+	"transwallet/api/service"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"

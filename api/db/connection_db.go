@@ -3,7 +3,7 @@ package db
 import (
 	"fmt"
 	"time"
-	"transwallet/db/migration"
+	"transwallet/api/db/migration"
 
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"

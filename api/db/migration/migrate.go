@@ -3,7 +3,7 @@ package migration
 import (
 	"errors"
 	"fmt"
-	"transwallet/model/domain"
+	"transwallet/api/model/domain"
 
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"

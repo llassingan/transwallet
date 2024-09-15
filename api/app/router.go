@@ -3,7 +3,7 @@ package app
 import (
 	"os"
 	"path/filepath"
-	"transwallet/controller"
+	"transwallet/api/controller"
 
 	// "transwallet/utils"
 	"github.com/gofiber/fiber/v2"

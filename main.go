@@ -1,8 +1,8 @@
 package main
 
 import (
-	"transwallet/app"
-	"transwallet/utils/logger"
+	"transwallet/api/app"
+	"transwallet/api/utils/logger"
 )
 
 func main() {

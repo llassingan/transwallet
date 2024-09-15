@@ -3,7 +3,7 @@ package exception
 import (
 	"errors"
 	"strings"
-	"transwallet/model/web"
+	"transwallet/api/model/web"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"

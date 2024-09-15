@@ -2,8 +2,8 @@ package service
 
 import (
 	"context"
-	"transwallet/model/web"
-	"transwallet/repository"
+	"transwallet/api/model/web"
+	"transwallet/api/repository"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/sirupsen/logrus"
