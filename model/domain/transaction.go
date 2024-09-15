@@ -10,7 +10,7 @@ type Transaction struct {
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime;<-:create"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
 
-	// Foreign Key relationship
+	// belongs to
 	AccountInfo Account `gorm:"foreignKey:AccountID;references:ID"`
 }
 

@@ -7,6 +7,8 @@ type Customer struct {
 	Name          string    `gorm:"column:name"`
 	CreatedAt     time.Time `gorm:"column:created_at;autoCreateTime;<-:create"`
 	UpdatedAt     time.Time `gorm:"column:updated_at;autoCreateTime;autoUpdateTime"`
+
+	// has one 
 	AccountNumber Account   `gorm:"foreignKey:UserID;references:ID"`
 }
 

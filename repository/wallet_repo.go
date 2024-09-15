@@ -15,9 +15,9 @@ type WalletRepository interface {
 	// Send Money
 	SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId uint, toAccountId uint, amount float64) (web.ReceiptResponse, error)
 
-	// Check Balance
+	// Get Balance
 	GetBalance(ctx context.Context, tx *gorm.DB, accountId uint) (domain.Account, error)
 
-	// Check Transaction History
+	// Get Transaction History
 	GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId uint) ([]domain.Transaction, error)
 }

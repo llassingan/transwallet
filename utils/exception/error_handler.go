@@ -10,25 +10,27 @@ import (
 	"gorm.io/gorm"
 )
 
-// ValidationErrorResponse defines the structure for validation error details
+// define struct for validation error details
 type ValidationErrorResponse struct {
 	Field   string `json:"field"`
 	Message string `json:"message"`
 }
 
-// ErrorHandler handles different types of errors
+// handling error
 func ErrorHandler() fiber.ErrorHandler {
-	return func(c *fiber.Ctx, err error) error { // Check if the error is a validation error
+	return func(c *fiber.Ctx, err error) error { 
+		// handling validation error
 		if ve, ok := err.(validator.ValidationErrors); ok {
 
 			var errors []ValidationErrorResponse
 			
-			for _, e := range ve { // Translate field and error message
+			for _, e := range ve {
+				 // get the  field and error message
 				errors = append(errors, ValidationErrorResponse{
 					Field: e.Field(),
 					Message:validationErrorMessage(e)})
-			} // Return a detailed validation error response
-			
+			} 
+			// wrap error standard response
 			stdResponse := web.StdErrorResponse{
 				Code: fiber.StatusBadRequest,
 				Status: "Bad Request",
@@ -36,7 +38,7 @@ func ErrorHandler() fiber.ErrorHandler {
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
-		// Handle not found errors
+		// handling not found errors
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			stdResponse := web.StdErrorResponse{
 				Code: fiber.StatusNotFound,
@@ -46,6 +48,7 @@ func ErrorHandler() fiber.ErrorHandler {
 			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
 		}
 
+		// handling insufficient funds 
 		if strings.Contains(err.Error(), "insufficient funds") {
 			stdResponse := web.StdErrorResponse{
 				Code: fiber.StatusBadRequest,
@@ -55,7 +58,7 @@ func ErrorHandler() fiber.ErrorHandler {
 			return c.Status(fiber.StatusNotFound).JSON(stdResponse)
 		}
 
-		// For any other internal server error
+		// handling any other error
 		stdResponse := web.StdErrorResponse{
 			Code: fiber.StatusInternalServerError,
 			Status: "Internal Server Error",
@@ -65,8 +68,9 @@ func ErrorHandler() fiber.ErrorHandler {
 	}
 }
 
-// Helper function to generate validation error messages
+// helper function to generate validation error messages
 func validationErrorMessage(e validator.FieldError) string {
+	// check used tags 
 	switch e.Tag() {
 	case "required":
 		return "This field is required"

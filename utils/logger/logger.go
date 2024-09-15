@@ -12,15 +12,16 @@ import (
 var log *logrus.Logger
 
 func InitLogger() {
-    log = logrus.New()
-
+    // create new instance 
+	log = logrus.New()
+	// set lebel to info
 	log.SetLevel(logrus.InfoLevel)
     logsDir := "logs/"
     if err := os.MkdirAll(logsDir, 0755); err != nil {
         log.Fatal(err)
     }
 
-    // Generate filename with current date and time
+    // generate filename with current date and time
     now := time.Now()
     filename := fmt.Sprintf("%s/%d-%02d-%02d_%02d-%02d-%02d_wallet_log.log",
         logsDir,
@@ -31,12 +32,12 @@ func InitLogger() {
         log.Fatal(err)
     }
 
-    // Configure logger
+    // config logger
     log.SetFormatter(&logrus.TextFormatter{
         FullTimestamp: true,
     })
 
-    // Combine outputs
+    // combine outputs to cli and log files
     log.SetOutput(io.MultiWriter(file, os.Stdout))
 }
 

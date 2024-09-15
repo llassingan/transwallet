@@ -11,9 +11,9 @@ type WalletController interface {
 	// Send Money
 	SendMoney(c *fiber.Ctx) error
 
-	// Check Balance
+	// Get Balance
 	GetBalance(c *fiber.Ctx) error
 
-	// Check Transaction History
+	// Get Transaction History
 	GetTransactionHistory(c *fiber.Ctx) error
 }

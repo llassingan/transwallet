@@ -15,27 +15,27 @@ type WalletRepositoryImpl struct {
 	Logger *logrus.Logger
 }
 
-// NewWalletRepository creates a new instance of WalletRepository
+//  create a new instance of WalletRepository
 func NewWalletRepository(logger *logrus.Logger) *WalletRepositoryImpl {
 	return &WalletRepositoryImpl{
 		Logger: logger,
 	}
 }
 
-// TopUp adds funds to an account
+// handle top up request
 func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId uint, amount float64) (domain.Transaction, error) {
 
 	var account domain.Account
 	var transaction domain.Transaction
-	// perform locking to handle race condition
+	
 	r.Logger.Info("Execute top up select acount query")
+	// perform locking to handle race condition
 	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&account, "id = ?", accountId).Error; err != nil {
 		r.Logger.Error(err)
 		return transaction,err
 	}
 
 	// update balance
-	
 	account.Balance += amount
 	r.Logger.Info("Execute top up update account query")
 	if err := tx.Save(&account).Error; err != nil {
@@ -43,12 +43,14 @@ func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId
 		return transaction, err
 	}
 
+	// create transaction value
 	transaction = domain.Transaction{
 		AccountID: accountId,
 		Amount:    amount,
 		Type:      "c",
 	}
 	r.Logger.Info("Execute top up insert debt transaction query")
+	// insert transaction data
 	if err := tx.Create(&transaction).Error; err != nil {
 		r.Logger.Error(err)
 		return transaction, err
@@ -57,12 +59,12 @@ func (r *WalletRepositoryImpl) TopUp(ctx context.Context, tx *gorm.DB, accountId
 	return transaction, nil
 }
 
-// SendMoney transfers money between accounts
+// handle send money request
 func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromAccountId uint, toAccountId uint, amount float64) (web.ReceiptResponse, error) {
 	var fromAccount, toAccount domain.Account
 	var transactiondeb, transactioncred domain.Transaction
 
-	// Fetch the accounts
+	// fetch the sender and recepient accounts
 	r.Logger.Info("Execute send money select sender acount query")
 	if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).First(&fromAccount, "id = ?", fromAccountId).Error; err != nil {
 		r.Logger.Error(err)
@@ -74,13 +76,13 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 		return web.ReceiptResponse{}, err
 	}
 
-	// Check if the fromAccount has sufficient balance
+	// check if the sender has sufficient balance
 	if fromAccount.Balance < amount {
 		r.Logger.Error("insufficient funds")
 		return web.ReceiptResponse{}, errors.New("insufficient funds")
 	}
 
-	// Update balances
+	// update balances for both account
 	fromAccount.Balance -= amount
 	toAccount.Balance += amount
 	r.Logger.Info("Execute send money update sender acount query")
@@ -94,7 +96,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 		return web.ReceiptResponse{}, err
 	}
 
-	// Create a new transaction record
+	// create a new transaction record
 	
 	transactiondeb = domain.Transaction{
 		AccountID: toAccountId,
@@ -102,6 +104,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 		Type:      "c",
 	}
 	r.Logger.Info("Execute send money insert credit transaction query")
+	// insert transaction data for both user
 	if err := tx.Create(&transactiondeb).Error; err != nil {
 		r.Logger.Error(err)
 		return web.ReceiptResponse{}, err
@@ -117,7 +120,7 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 		r.Logger.Error(err)
 		return web.ReceiptResponse{}, err
 	}
-	// Prepare the response
+	// wrap the response
 	response := web.ReceiptResponse{
 		IdTrx:            transactiondeb.ID,
 		SenderAccNumb:    fromAccountId,
@@ -129,12 +132,13 @@ func (r *WalletRepositoryImpl) SendMoney(ctx context.Context, tx *gorm.DB, fromA
 	return response, nil
 }
 
-// GetBalance returns the current balance of an account
+// handle get balance request
 func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, accountId uint) (domain.Account, error) {
 	var account domain.Account
 
-	// Fetch the account
+	// fetch the account
 	r.Logger.Info("Execute get balance select account query")
+	// get the balance data
 	if err := tx.First(&account, "id= ?",accountId).Error; err != nil {
 		r.Logger.Error(err)
 		return account, err
@@ -143,11 +147,11 @@ func (r *WalletRepositoryImpl) GetBalance(ctx context.Context, tx *gorm.DB, acco
 	return account, nil
 }
 
-// GetTransactionHistory returns the transaction history for an account
+// handle get transaction history
 func (r *WalletRepositoryImpl) GetTransactionHistory(ctx context.Context, tx *gorm.DB, accountId uint) ([]domain.Transaction, error) {
 	var transactions []domain.Transaction
 
-	// Fetch transactions for the account
+	// fetch transactions data
 	r.Logger.Info("Execute get history select query")
 	if err := tx.Where("account = ?", accountId).Find(&transactions).Error; err != nil {
 		r.Logger.Error(err)
