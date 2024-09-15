@@ -6,6 +6,7 @@ import (
 	"transwallet/repository"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
 
@@ -13,34 +14,40 @@ type WalletServiceImpl struct {
 	DB       *gorm.DB
 	Repo     repository.WalletRepository
 	Validate *validator.Validate
+	Logger   *logrus.Logger
 }
 
-func NewWalletService(repo repository.WalletRepository, db *gorm.DB, validate *validator.Validate) *WalletServiceImpl {
+func NewWalletService(repo repository.WalletRepository, db *gorm.DB, validate *validator.Validate, logger *logrus.Logger) *WalletServiceImpl {
 	return &WalletServiceImpl{
 		Repo:     repo,
 		DB:       db,
-		Validate: validate}
+		Validate: validate,
+		Logger:   logger}
 }
 
 func (s *WalletServiceImpl) TopUp(ctx context.Context, req web.TopUpRequest) (web.TopUpResponse, error) {
 	var TopUpResponse web.TopUpResponse
 	err := s.Validate.Struct(req)
 	if err != nil {
+		s.Logger.Error(err)
 		return TopUpResponse, err
 	}
 	tx := s.DB.Begin()
+	s.Logger.Info("Begin transaction")
 	defer tx.Rollback()
 
 	res, err := s.Repo.TopUp(ctx, tx, req.AccountID, req.Amount)
 	if err != nil {
 		return TopUpResponse, err
 	}
-	tx.Commit()
+	
 	TopUpResponse = web.TopUpResponse{
 		TrxId:     res.ID,
 		AccountID: res.AccountID,
 		Amount:    res.Amount,
 	}
+	tx.Commit()
+	s.Logger.Info("Commit transaction")
 	return TopUpResponse, nil
 
 }
@@ -49,9 +56,11 @@ func (s *WalletServiceImpl) SendMoney(ctx context.Context, req web.SendRequest) 
 	var ReceiptResponse web.ReceiptResponse
 	err := s.Validate.Struct(req)
 	if err != nil {
+		s.Logger.Error(err)
 		return ReceiptResponse, err
 	}
 	tx := s.DB.Begin()
+	s.Logger.Info("Begin transaction")
 	defer tx.Rollback()
 
 	res, err := s.Repo.SendMoney(ctx, tx, req.FromAccount, req.ToAccount, req.Amount)
@@ -59,7 +68,7 @@ func (s *WalletServiceImpl) SendMoney(ctx context.Context, req web.SendRequest) 
 		return ReceiptResponse, err
 	}
 
-	tx.Commit()
+	
 	ReceiptResponse = web.ReceiptResponse{
 		IdTrx:            res.IdTrx,
 		SenderAccNumb:    res.SenderAccNumb,
@@ -67,49 +76,53 @@ func (s *WalletServiceImpl) SendMoney(ctx context.Context, req web.SendRequest) 
 		RecepientName:    res.RecepientName,
 		Amount:           res.Amount,
 	}
-
+	tx.Commit()
+	s.Logger.Info("Commit transaction")
 	return ReceiptResponse, nil
 }
 
-func (s *WalletServiceImpl) GetBalance(ctx context.Context, accountId uint) (web.BalanceResponse,error) {
+func (s *WalletServiceImpl) GetBalance(ctx context.Context, accountId uint) (web.BalanceResponse, error) {
 	var BalanceResponse web.BalanceResponse
 	tx := s.DB.Begin()
+	s.Logger.Info("Begin transaction")
 	defer tx.Rollback()
 
-	res,err := s.Repo.GetBalance(ctx,tx,accountId)
+	res, err := s.Repo.GetBalance(ctx, tx, accountId)
 	if err != nil {
 		return BalanceResponse, err
 	}
-	tx.Commit()
+	
 	BalanceResponse = web.BalanceResponse{
 		AccountID: res.ID,
-		Balance: res.Balance,
+		Balance:   res.Balance,
 	}
-
+	tx.Commit()
+	s.Logger.Info("Commit transaction")
 	return BalanceResponse, nil
 }
 
-func (s *WalletServiceImpl) GetTransactionHistory(ctx context.Context, accountId uint) ([]web.TransactionResponse,error) {
+func (s *WalletServiceImpl) GetTransactionHistory(ctx context.Context, accountId uint) ([]web.TransactionResponse, error) {
 	var ListHistory []web.TransactionResponse
 	tx := s.DB.Begin()
+	s.Logger.Info("Begin transaction")
 	defer tx.Rollback()
 
-	res,err := s.Repo.GetTransactionHistory(ctx,tx,accountId)
+	res, err := s.Repo.GetTransactionHistory(ctx, tx, accountId)
 	if err != nil {
 		return ListHistory, err
 	}
 
 	for _, transaction := range res {
 		transactionResponse := web.TransactionResponse{
-			TrxId: transaction.ID,
+			TrxId:           transaction.ID,
 			TransactionType: transaction.Type,
-			Amount: transaction.Amount,
-			Time: transaction.CreatedAt,
+			Amount:          transaction.Amount,
+			Time:            transaction.CreatedAt,
 		}
 		ListHistory = append(ListHistory, transactionResponse)
 	}
 
 	tx.Commit()
-
-	return ListHistory,nil
+	s.Logger.Info("Commit transaction")
+	return ListHistory, nil
 }

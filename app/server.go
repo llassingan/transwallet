@@ -9,18 +9,19 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
+	"github.com/sirupsen/logrus"
 )
 
-func NewServer() *fiber.App {
+func NewServer(log *logrus.Logger) *fiber.App {
 	option := []validator.Option{
         validator.WithRequiredStructEnabled(),
     }
-
-	walletRepositoryImpl := repository.NewWalletRepository()
-	db := db.NewDB()
+	
+	walletRepositoryImpl := repository.NewWalletRepository(log)
+	db := db.NewDB(log)
 	validate := NewValidator(option)
-	walletServiceImpl := service.NewWalletService(walletRepositoryImpl,db,validate)
-	walletControllerImpl :=controller.NewWalletController(walletServiceImpl)
+	walletServiceImpl := service.NewWalletService(walletRepositoryImpl,db,validate,log)
+	walletControllerImpl :=controller.NewWalletController(walletServiceImpl,log)
 
 	var server = fiber.New(fiber.Config{
 		ErrorHandler: exception.ErrorHandler() ,
