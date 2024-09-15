@@ -14,15 +14,17 @@ type WalletControllerImpl struct {
 	Logger        *logrus.Logger
 }
 
-// Create a new instance of WalletController
+// create a new instance of WalletController
 func NewWalletController(walletService service.WalletService, logger *logrus.Logger) *WalletControllerImpl {
 	return &WalletControllerImpl{WalletService: walletService, Logger: logger}
 }
 
-// Handle Top-Up request
+// handle top up request
 func (ctrl *WalletControllerImpl) TopUp(c *fiber.Ctx) error {
 	var req web.TopUpRequest
+	// parse body
 	if err := c.BodyParser(&req); err != nil {
+		// error handling 
 		ctrl.Logger.WithFields(logrus.Fields{
 			"accountNumber": req.AccountID,
 			"amount":        req.Amount,
@@ -30,16 +32,20 @@ func (ctrl *WalletControllerImpl) TopUp(c *fiber.Ctx) error {
 		}).Error("Invalid input")
 		return fiber.NewError(fiber.StatusBadRequest, "Invalid input")
 	}
+	//logging
 	ctrl.Logger.WithFields(logrus.Fields{
 		"accountNumber": req.AccountID,
 		"amount":        req.Amount,
 		"method":        c.Method(),
 		"path":          c.Path(),
 	}).Info("top up request")
+
+	// pass value to service layer
 	response, err := ctrl.WalletService.TopUp(c.Context(), req)
 	if err != nil {
 		return err
 	}
+	// wrap response 
 	stdResponse := web.StdResponse{
 		Code:   fiber.StatusOK,
 		Status: "Success",
@@ -48,7 +54,7 @@ func (ctrl *WalletControllerImpl) TopUp(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
-// Handle Send Money request
+// handle send money request
 func (ctrl *WalletControllerImpl) SendMoney(c *fiber.Ctx) error {
 	var req web.SendRequest
 	if err := c.BodyParser(&req); err != nil {
@@ -83,7 +89,7 @@ func (ctrl *WalletControllerImpl) SendMoney(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
-// Handle Get Balance request
+// handle get balance request
 func (ctrl *WalletControllerImpl) GetBalance(c *fiber.Ctx) error {
 	accountIdStr := c.Params("accountNumber")
 	accountId, err := strconv.ParseUint(accountIdStr, 10, 32)
@@ -114,7 +120,7 @@ func (ctrl *WalletControllerImpl) GetBalance(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(stdResponse)
 }
 
-// Handle Get Transaction History request
+// handle get transaction history request
 func (ctrl *WalletControllerImpl) GetTransactionHistory(c *fiber.Ctx) error {
 	accountIdStr := c.Params("accountNumber")
 	accountId, err := strconv.ParseUint(accountIdStr, 10, 32)
