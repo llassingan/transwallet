@@ -38,6 +38,27 @@ func ErrorHandler() fiber.ErrorHandler {
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
+
+
+		if strings.Contains(err.Error(), "sender not found") {
+			stdResponse := web.StdErrorResponse{
+				Code:   fiber.StatusBadRequest,
+				Status: "Bad Request",
+				Error:  "sender not found",
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
+		}
+
+		if strings.Contains(err.Error(), "recepient not found") {
+			stdResponse := web.StdErrorResponse{
+				Code:   fiber.StatusBadRequest,
+				Status: "Bad Request",
+				Error:  "recepient not found",
+			}
+			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
+		}
+
+
 		// handling not found errors
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			stdResponse := web.StdErrorResponse{
@@ -57,6 +78,7 @@ func ErrorHandler() fiber.ErrorHandler {
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
+
 
 		// handling insufficient funds
 		if strings.Contains(err.Error(), "insufficient funds") {
