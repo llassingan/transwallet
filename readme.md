@@ -58,6 +58,7 @@ The application implements locking mechanisms during data modifications to ensur
    ```bash
    docker-compose up
    ```
+   There may be errors in the log during the process of inserting dummy data. These can be ignored, as the errors occur while checking whether the schema already exists or not.
 5. **The application is now up and running**
 
 ## Improvement
