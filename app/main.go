@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"transwallet/api/core"
 	"transwallet/api/utils/logger"
 )
@@ -11,8 +12,10 @@ func main() {
     log := logger.GetLogger()
 	log.Info("Initialize Application")
 	// init server
+	port := os.Getenv("PORT")
 	server := core.NewServer(log)
-	if err := server.Listen(":8000"); err != nil {
+	log.Info(port)
+	if err := server.Listen(":" + port); err != nil {
 		log.Fatalf("Server failed to start: %v", err)
 	}
 }
