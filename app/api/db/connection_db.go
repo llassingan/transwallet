@@ -70,10 +70,15 @@ func NewDB(log *logrus.Logger) *gorm.DB {
 
 	// start the migration
 	err = migration.CheckTableData[domain.Customer](db,domain.Customer{})
-	if err == nil{
+	if err!= nil{
+		// if the table is exist but has no value then add dummy data
+		if err == gorm.ErrRecordNotFound{
+			migration.AddDummyData(db,log)
+		}
 		migration.Migration(db,log)
 		migration.AddDummyData(db,log)
 	}
+	
 	
 	return db
 }

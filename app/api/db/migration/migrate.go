@@ -27,8 +27,9 @@ func CheckTableData[T any](db *gorm.DB, table T) error {
 	if err != nil {
 		// if no record return nil
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil
+			return gorm.ErrRecordNotFound
 		}
+		return err
 
 	}
 	return errors.New("table is not empty")
@@ -39,7 +40,7 @@ func AddDummyData(db *gorm.DB, log *logrus.Logger) {
 	// Insert dummy customer
 	log.Info("start inserting dummy data")
 	err := CheckTableData[domain.Customer](db, domain.Customer{})
-	if err == nil {
+	if err == gorm.ErrRecordNotFound {
 		customers := []domain.Customer{
 			{ID: 1, Name: "Andi"},
 			{ID: 2, Name: "Budi"},
@@ -54,7 +55,7 @@ func AddDummyData(db *gorm.DB, log *logrus.Logger) {
 
 	// Insert dummy account data
 	err = CheckTableData[domain.Account](db, domain.Account{})
-	if err == nil {
+	if err == gorm.ErrRecordNotFound {
 		accounts := []domain.Account{
 			{ID: 100001, UserID: 1, Balance: 1000.0},
 			{ID: 100002, UserID: 2, Balance: 1000.0},
@@ -69,7 +70,7 @@ func AddDummyData(db *gorm.DB, log *logrus.Logger) {
 
 	// Insert dummy transactions
 	err = CheckTableData[domain.Transaction](db, domain.Transaction{})
-	if err == nil {
+	if err == gorm.ErrRecordNotFound {
 		transactions := []domain.Transaction{
 			{AccountID: 100001, Amount: 1000.0, Type: "c"},
 			{AccountID: 100002, Amount: 1000.0, Type: "c"},
