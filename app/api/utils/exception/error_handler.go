@@ -39,11 +39,10 @@ func ErrorHandler() fiber.ErrorHandler {
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
 
-
 		if strings.Contains(err.Error(), "sender not found") {
 			stdResponse := web.StdErrorResponse{
-				Code:   fiber.StatusBadRequest,
-				Status: "Bad Request",
+				Code:   fiber.StatusNotFound,
+				Status: "Not Found",
 				Error:  "sender not found",
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
@@ -51,13 +50,12 @@ func ErrorHandler() fiber.ErrorHandler {
 
 		if strings.Contains(err.Error(), "recepient not found") {
 			stdResponse := web.StdErrorResponse{
-				Code:   fiber.StatusBadRequest,
-				Status: "Bad Request",
+				Code:   fiber.StatusNotFound,
+				Status: "Not Found",
 				Error:  "recepient not found",
 			}
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
-
 
 		// handling not found errors
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -79,7 +77,6 @@ func ErrorHandler() fiber.ErrorHandler {
 			return c.Status(fiber.StatusBadRequest).JSON(stdResponse)
 		}
 
-
 		// handling insufficient funds
 		if strings.Contains(err.Error(), "insufficient funds") {
 			stdResponse := web.StdErrorResponse{
@@ -94,7 +91,7 @@ func ErrorHandler() fiber.ErrorHandler {
 		stdResponse := web.StdErrorResponse{
 			Code:   fiber.StatusInternalServerError,
 			Status: "Internal Server Error",
-			Error:  err,
+			Error:  err.Error(),
 		}
 		return c.Status(fiber.StatusInternalServerError).JSON(stdResponse)
 	}
